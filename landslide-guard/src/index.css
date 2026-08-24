@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-base-deep text-ink-hi font-body antialiased;
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(45,212,232,0.06), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 0%, rgba(59,130,246,0.05), transparent 55%);
+    background-attachment: fixed;
+  }
+  h1,h2,h3,h4 { @apply font-display; }
+  ::selection { background: rgba(45,212,232,0.3); }
+  * { scrollbar-width: thin; scrollbar-color: #25406E transparent; }
+  *::-webkit-scrollbar { width: 8px; height: 8px; }
+  *::-webkit-scrollbar-thumb { background: #25406E; border-radius: 8px; }
+
+  /* Visible keyboard focus everywhere — critical for an emergency-alert app
+     that must stay operable without a mouse. */
+  :focus-visible {
+    outline: 2px solid #2DD4E8;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
+    outline: 2px solid #2DD4E8;
+    outline-offset: 2px;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 9999;
+    background: #2DD4E8;
+    color: #080D18;
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 0.6rem 1rem;
+    border-radius: 0 0 0.5rem 0;
+  }
+  .skip-link:focus {
+    left: 0;
+  }
+}
+
+/* Respect users who've asked the OS to minimize motion — pulsing risk
+   indicators and page transitions can be genuinely uncomfortable, and this
+   app leans on both heavily (alert pulses, fade-ins, drifting texture). */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-base-panel/80 backdrop-blur-sm border border-base-line rounded-2xl shadow-panel;
+  }
+  .glass-card {
+    @apply bg-base-panel/70 backdrop-blur-sm border border-base-line rounded-xl transition-all duration-300;
+  }
+  .glass-card:hover {
+    @apply border-signal/40 shadow-glow bg-base-panel/90 -translate-y-0.5;
+  }
+  .eyebrow {
+    @apply text-[11px] tracking-[0.2em] uppercase text-signal font-mono font-medium;
+  }
+  .data-num {
+    @apply font-mono tabular-nums;
+  }
+  .btn-primary {
+    @apply text-base-deep font-semibold rounded-lg px-5 py-2.5 transition-all duration-200
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-glow
+           hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98];
+    background: linear-gradient(135deg, #2DD4E8 0%, #1AA6B8 100%);
+    box-shadow: 0 0 0 1px rgba(45,212,232,0.15), 0 4px 20px rgba(45,212,232,0.22);
+  }
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: 0 0 0 1px rgba(45,212,232,0.25), 0 6px 28px rgba(45,212,232,0.34);
+  }
+  .btn-ghost {
+    @apply border border-base-line2 text-ink-hi rounded-lg px-5 py-2.5 hover:border-signal/60 hover:bg-base-panel2 transition-all duration-200
+           disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] hover:-translate-y-0.5;
+  }
+  .nav-link {
+    @apply flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-ink-mid hover:text-ink-hi hover:bg-base-panel2 transition-colors duration-150;
+  }
+  .nav-link.active {
+    @apply bg-base-panel2 text-signal border-l-2 border-signal;
+  }
+
+  /* Small square icon buttons used for map toolbars / compact actions */
+  .icon-btn {
+    @apply flex items-center justify-center w-9 h-9 rounded-lg border border-base-line2 bg-base-panel/90 backdrop-blur-sm
+           text-ink-mid hover:text-signal hover:border-signal/50 hover:bg-base-panel2 transition-all duration-150
+           disabled:opacity-40 disabled:cursor-not-allowed active:scale-95;
+  }
+
+  /* Auth-provider buttons (Google / LinkedIn) on Login & Signup */
+  .btn-oauth {
+    @apply w-full flex items-center justify-center gap-2.5 rounded-lg px-4 py-2.5 text-sm font-medium
+           border border-base-line2 bg-base-panel2/60 text-ink-hi hover:bg-base-panel2 hover:border-signal/40
+           transition-all duration-150 active:scale-[0.98];
+  }
+}
+
+/* Contour-line signature texture (topographic elevation lines) */
+.contour-field {
+  position: relative;
+  overflow: hidden;
+}
+.contour-field::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='800' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%232DD4E8' stroke-opacity='0.35' stroke-width='1'%3E%3Cpath d='M-50 620 C 150 560, 250 700, 450 640 S 750 520, 900 600'/%3E%3Cpath d='M-50 560 C 150 500, 260 640, 460 580 S 760 460, 900 540'/%3E%3Cpath d='M-50 500 C 160 440, 270 580, 470 520 S 770 400, 900 480'/%3E%3Cpath d='M-50 440 C 170 380, 280 520, 480 460 S 780 340, 900 420'/%3E%3Cpath d='M-50 380 C 180 320, 290 460, 490 400 S 790 280, 900 360'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: bottom;
+  pointer-events: none;
+}
+
+.leaflet-container {
+  background: #0E1830 !important;
+  border-radius: 1rem;
+  font-family: 'Inter', sans-serif;
+}
+.leaflet-popup-content-wrapper {
+  background: #0E1830;
+  color: #EAF0FA;
+  border: 1px solid #25406E;
+  border-radius: 12px;
+}
+.leaflet-popup-tip { background: #0E1830; }
+.leaflet-popup-content { margin: 14px 16px; font-size: 13px; }
+.leaflet-control-attribution { background: rgba(8,13,24,0.7) !important; color: #9FB2D4 !important; }
+.leaflet-control-zoom a { background: #0E1830 !important; color: #EAF0FA !important; border-color: #25406E !important; }
